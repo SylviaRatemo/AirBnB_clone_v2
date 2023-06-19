@@ -127,7 +127,7 @@ class HBNBCommand(cmd.Cmd):
             if (args[i].count("=") == 1):
                 attrib = args[i].split('=')
                 if type(attrib[0] == str):
-                    if (attrib[1].count{'"') == 2):
+                    if (attrib[1].count('"') == 2):
                         if (attrib[1].count('_') > 0):
                             attrib[1] = attrib[1].replace('_', ' ')
                         new_instance.__dict__.update({
