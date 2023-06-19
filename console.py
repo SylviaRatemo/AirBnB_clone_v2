@@ -133,7 +133,8 @@ class HBNBCommand(cmd.Cmd):
                         new_instance.__dict__.update({
                             attrib[0]: attrib[1].strip('"')})
                     elif (attrib[1].replace('.', '', 1).isdigit()
-                            or attrib[1].replace('.', '', 1).replace('-','', 1)):
+                            or attrib[1].replace('.', '', 1)
+                            .replace('-', '', 1)):
                         if attrib[1].isdigit():
                             new_instance.__dict__.update({
                                 attrib[0]: int(attrib[1])})
