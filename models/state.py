@@ -16,8 +16,8 @@ class State(BaseModel, Base):
         @property
         def cities(self):
             """Get a list of all related City objects."""
-            city_list = []
+            listCity = []
             for city in list(models.storage.all(City).values()):
                 if city.state_id == self.id:
-                    city_list.append(city)
-            return city_list
+                    listCity.append(city)
+            return listCity
