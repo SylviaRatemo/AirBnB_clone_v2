@@ -60,6 +60,7 @@ class FileStorage:
     def delete(self, obj=None):
         """"Delete obj if present"""
         try:
-            del FileStorage.__objects["{}.{}".format(type(obj).__name__, obj.id)]
+            del FileStorage.__objects["{}.{}".format(type(obj).__name__,
+                                                     obj.id)]
         except (AttributeError, KeyError):
             pass

@@ -16,6 +16,7 @@ association_table = Table("place_amenity", Base.metadata,
                                  ForeignKey("amenities.id"),
                                  primary_key=True, nullable=False))
 
+
 class Place(BaseModel, Base):
     """ A place to stay """
     __tablename__ = "places"
