@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 """ Place Module for HBNB project """
-from models.base_model import Base, BaseModel
 import models
 from os import getenv
+from models.base_model import Base, BaseModel
 from models.amenity import Amenity
 from models.review import Review
 from sqlalchemy import Column, Float, ForeignKey, Integer, String, Table
