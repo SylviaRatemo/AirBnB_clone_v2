@@ -13,7 +13,7 @@ from sqlalchemy.orm import relationship, scoped_session, sessionmaker
 
 
 class DBStorage:
-    """Represents a database storage engine """
+    """Represents a database storage engine"""
 
     __engine = None
     __session = None
@@ -30,7 +30,7 @@ class DBStorage:
             Base.metadata.drop_all(self.__engine)
 
     def all(self, cls=None):
-        """Query on the curret database session all objects of the given class"""
+        """Query on the current database session all objects of the given class"""
         if cls is None:
             objs = self.__session.query(State).all()
             objs.extend(self.__session.query(City).all())
@@ -42,7 +42,7 @@ class DBStorage:
             if type(cls) == str:
                 cls = eval(cls)
             objs = self.__session.query(cls)
-        return {"{}.{}".format(type(o).__name__, o.id): o for o in objs}
+        return {"{}.{}".format(type(obj).__name__, obj.id): obj for obj in objs}
 
     def new(self, obj):
         """Add obj to the current database session."""
