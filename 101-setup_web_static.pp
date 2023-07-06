@@ -1,24 +1,24 @@
 exec { 'apt-update':
-  command => 'apt-get -y update',
-  path    => ['/usr/bin', '/bin'],
-  before  => Class['nginx'],
+  command => '/usr/bin/apt-get -y update',
+  path    => '/usr/bin',
+  before  => Package['nginx'],
 }
 
 package { 'nginx':
   ensure => installed,
-  before => File['/etc/nginx/sites-available/default'],
+}
+
+file { '/etc/nginx/sites-available/default':
+  ensure  => file,
+  content => template('nginx/default.erb'),
+  require => Package['nginx'],
+  notify  => Service['nginx'],
 }
 
 service { 'nginx':
   ensure    => running,
   enable    => true,
   subscribe => File['/etc/nginx/sites-available/default'],
-}
-
-exec { 'ufw-allow-http':
-  command => 'ufw allow \'Nginx HTTP\'',
-  path    => ['/usr/bin', '/bin'],
-  require => Package['nginx'],
 }
 
 file { '/data/web_static/':
@@ -35,7 +35,12 @@ file { '/data/web_static/shared/':
 
 file { '/data/web_static/releases/test/index.html':
   ensure  => file,
-  content => '<html>\n  <head>\n  </head>\n  <body>\n    Holberton School\n  </body>\n</html>\n',
+  content => 'Hello Holberton School!',
+}
+
+file { '/var/www/html/custom_404.html':
+  ensure  => file,
+  content => "Ceci n'est pas une page\n",
 }
 
 file { '/data/web_static/current':
@@ -44,27 +49,22 @@ file { '/data/web_static/current':
 }
 
 exec { 'chown-ubuntu':
-  command => 'chown -R ubuntu:ubuntu /data',
-  path    => ['/usr/bin', '/bin'],
+  command => 'chown -R ubuntu:ubuntu /data/',
+  path    => '/usr/bin',
 }
 
 file_line { 'nginx-location':
   path    => '/etc/nginx/sites-available/default',
-  line    => 'location /hbnb_static/ { alias /data/web_static/current/; }',
-  match   => 'listen 80 default_server',
+  line    => '  location /hbnb_static {',
+  match   => '  location / {',
   require => Package['nginx'],
   notify  => Service['nginx'],
 }
 
 exec { 'nginx-restart':
   command     => 'service nginx restart',
-  path        => ['/usr/bin', '/bin'],
+  path        => '/usr/bin',
   refreshonly => true,
   subscribe   => File_line['nginx-location'],
 }
 
-exec { 'exit':
-  command => 'exit 0',
-  path    => ['/usr/bin', '/bin'],
-  returns => [0],
-}
