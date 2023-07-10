@@ -1,20 +1,21 @@
 #!/usr/bin/python3
-""" Fabric script to create tar"""
+"""tgz archive of web_static folder"""
 
-import tarfile
-import os
 from datetime import datetime
+from fabric.api import local
 
 
 def do_pack():
-    """ Create the tar archive"""
-    savedir = "versions/"
-    filename = "web_static_" + datetime.now().strftime("%Y%m%d%H%M%S") + ".tgz"
-    if not os.path.exists(savedir):
-        os.mkdir(savedir)
-    with tarfile.open(savedir + filename, "w:gz") as tar:
-        tar.add("web_static", arcname=os.path.basename("web_static"))
-    if os.path.exists(savedir + filename):
-        return savedir + filename
+    """Generate the .tgz archive from web_static"""
+
+    dt = datetime.now()
+    now = dt.strftime('%Y%m%d%H%M%S')
+
+    local("mkdir -p versions")
+    location = "versions/web_static_{}.tgz".format(now)
+    result = local("tar -czvf {} web_static".format(location))
+
+    if result.succeeded:
+        return location
     else:
         return None
