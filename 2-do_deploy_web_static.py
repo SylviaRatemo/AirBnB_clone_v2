@@ -4,7 +4,7 @@
 from fabric.api import *
 import os
 
-env.hosts = ["34.232.53.87", "100.25.10.249"]
+env.hosts = ["34.232.53.87", "100.25.10.249", "localhost"]
 env.user = "ubuntu"
 
 
@@ -14,25 +14,50 @@ def do_deploy(archive_path):
         return False
 
     results = []
+    if env.hosts == ["localhost"]:
+         basename = os.path.basename(archive_path)
+        if basename[-4:] == ".tgz":
+            name = basename[:-4]
+        newdir = "data/web_static/releases/" + name
 
-    res = put(archive_path, "/tmp")
-    results.append(res.succeeded)
+        local("mkdir -p " + newdir)
+        local("tar -xzf " + archive_path + " -C " + newdir)
 
-    basename = os.path.basename(archive_path)
-    if basename[-4:] == ".tgz":
-        name = basename[:-4]
-    newdir = "/data/web_static/releases/" + name
-    run("sudo mkdir -p " + newdir)
-    run("sudo tar -xzf /tmp/" + basename + " -C " + newdir)
+        local("rm " + archive_path)
 
-    run("sudo rm /tmp/" + basename)
+        local("rsync -a " + newdir + "/web_static/ " + newdir)
+        local("rm -rf " + newdir + "/web_static")
 
-    run("sudo rsync -a /data/web_static/releases/{}/web_static/ {}/"
-        .format(name, newdir))
-    run("sudo rm -rf " + newdir + "/web_static")
+        current_path = "data/web_static/current"
+        if os.path.lexists(current_path):
+            os.remove(current_path)
+        os.symlink(newdir, current_path)
+    
+    # remote
+    else:
+        res = put(archive_path, "/tmp")
+        results.append(res.succeeded)
 
-    current_path = "/data/web_static/current"
-    run("sudo rm -rf {}".format(current_path))
-    run("sudo ln -s {} {}".format(newdir, current_path))
+        basename = os.path.basename(archive_path)
+        if basename[-4:] == ".tgz":
+            name = basename[:-4]
+        newdir = "/data/web_static/releases/" + name
+        run("sudo mkdir -p " + newdir)
+        run("sudo tar -xzf /tmp/" + basename + " -C " + newdir)
+
+        run("sudo rm /tmp/" + basename)
+
+        run("sudo rsync -a /data/web_static/releases/{}/web_static/ {}/"
+            .format(name, newdir))
+        run("sudo rm -rf " + newdir + "/web_static")
+
+        current_path = "/data/web_static/current"
+        run("sudo rm -rf {}".format(current_path))
+        run("sudo ln -s {} {}".format(newdir, current_path))
 
     return True
+
+# Run the deployment locally for testing
+if __name__ == "__main__":
+    archive_path = "versions/"+name
+    do_deploy(archive_path)
