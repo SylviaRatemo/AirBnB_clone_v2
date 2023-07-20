@@ -59,9 +59,8 @@ def do_deploy(archive_path):
 
     return True
 
+
 # Run the deployment locally for testing
 if __name__ == "__main__":
-    #name = "web_static_20230710020440.tgz"
     archive_path = "versions/"
     do_deploy(archive_path)
-
