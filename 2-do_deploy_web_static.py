@@ -14,8 +14,10 @@ def do_deploy(archive_path):
         return False
 
     results = []
+
+    # Local deployment
     if env.hosts == ["localhost"]:
-         basename = os.path.basename(archive_path)
+        basename = os.path.basename(archive_path)
         if basename[-4:] == ".tgz":
             name = basename[:-4]
         newdir = "data/web_static/releases/" + name
@@ -32,8 +34,8 @@ def do_deploy(archive_path):
         if os.path.lexists(current_path):
             os.remove(current_path)
         os.symlink(newdir, current_path)
-    
-    # remote
+
+    # Remote deployment
     else:
         res = put(archive_path, "/tmp")
         results.append(res.succeeded)
@@ -59,5 +61,7 @@ def do_deploy(archive_path):
 
 # Run the deployment locally for testing
 if __name__ == "__main__":
-    archive_path = "versions/"+name
+    #name = "web_static_20230710020440.tgz"
+    archive_path = "versions/"
     do_deploy(archive_path)
+
