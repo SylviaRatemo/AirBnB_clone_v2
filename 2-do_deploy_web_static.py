@@ -27,7 +27,8 @@ def do_deploy(archive_path):
 
     run("sudo rm /tmp/" + basename)
 
-    run("sudo rsync -a /data/web_static/releases/{}/web_static/ {}/".format(name, newdir))
+    run("sudo rsync -a /data/web_static/releases/{}/web_static/ {}/"
+        .format(name, newdir))
     run("sudo rm -rf " + newdir + "/web_static")
 
     current_path = "/data/web_static/current"
