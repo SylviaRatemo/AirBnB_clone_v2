@@ -25,29 +25,19 @@ def do_deploy(archive_path):
 
     # Local deployment
     if os.path.exists(archive_path):
-        basename = os.path.basename(archive_path)
-        if basename[-4:] == ".tgz":
-            name = basename[:-4]
-        res = put(archive_path, "/tmp")
-        results.append(res.succeeded)
+        archive = archive_path.split('/')[1]
+        a_path = "/tmp/{}".format(archive)
+        folder = archive.split('.')[0]
+        f_path = "/data/web_static/releases/{}/".format(folder)
 
-        basename = os.path.basename(archive_path)
-        if basename[-4:] == ".tgz":
-            name = basename[:-4]
-        newdir = "/data/web_static/releases/" + name
-        run("sudo mkdir -p " + newdir)
-        run("sudo tar -xzf /tmp/" + basename + " -C " + newdir)
-
-        run("sudo rm /tmp/" + basename)
-
-        run("sudo rsync -a /data/web_static/releases/{}/web_static/ {}/"
-            .format(name, newdir))
-        run("sudo rm -rf " + newdir + "/web_static")
-
-        current_path = "/data/web_static/current"
-        run("sudo rm -rf {}".format(current_path))
-        run("sudo ln -s {} {}".format(newdir, current_path))
-
+        put(archive_path, a_path)
+        run("sudo mkdir -p {}".format(f_path))
+        run("sudo tar -xzf {} -C {}".format(a_path, f_path))
+        run("sudo rm {}".format(a_path))
+        run("sudo mv -fi {}web_static/* {}".format(f_path, f_path))
+        run("sudo rm -rf {}web_static".format(f_path))
+        run("sudo rm -rf /data/web_static/current")
+        run("sudo ln -s {} /data/web_static/current".format(f_path))
         return True
 
     return False
