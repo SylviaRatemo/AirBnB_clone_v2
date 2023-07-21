@@ -2,41 +2,32 @@
 """ Deployment"""
 
 from fabric.api import *
+from datetime import datetime
 import os
 
-env.hosts = ["34.232.53.87", "100.25.10.249", "localhost"]
+env.hosts = ["34.232.53.87", "100.25.10.249"]
 env.user = "ubuntu"
+
+
+def do_pack():
+    """Generates a .tgz archive from the content"""
+
+    d = datetime.now()
+    now = d.strftime('%Y%m%d%H%M%S')
+
+    local("mkdir -p versions")
+    local("tar -czvf versions/web_static_{}.tgz web_static".format(now))
 
 
 def do_deploy(archive_path):
     """ Deploys archive to servers"""
-    if not os.path.exists(archive_path):
-        return False
-
     results = []
 
     # Local deployment
-    if env.hosts == ["localhost"]:
+    if os.path.exists(archive_path):
         basename = os.path.basename(archive_path)
         if basename[-4:] == ".tgz":
             name = basename[:-4]
-        newdir = "data/web_static/releases/" + name
-
-        local("mkdir -p " + newdir)
-        local("tar -xzf " + archive_path + " -C " + newdir)
-
-        local("rm " + archive_path)
-
-        local("rsync -a " + newdir + "/web_static/ " + newdir)
-        local("rm -rf " + newdir + "/web_static")
-
-        current_path = "data/web_static/current"
-        if os.path.lexists(current_path):
-            os.remove(current_path)
-        os.symlink(newdir, current_path)
-
-    # Remote deployment
-    else:
         res = put(archive_path, "/tmp")
         results.append(res.succeeded)
 
@@ -57,10 +48,6 @@ def do_deploy(archive_path):
         run("sudo rm -rf {}".format(current_path))
         run("sudo ln -s {} {}".format(newdir, current_path))
 
-    return True
+        return True
 
-
-# Run the deployment locally for testing
-if __name__ == "__main__":
-    archive_path = "versions/"
-    do_deploy(archive_path)
+    return False
