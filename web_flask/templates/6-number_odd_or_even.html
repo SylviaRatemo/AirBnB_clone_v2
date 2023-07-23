@@ -4,6 +4,11 @@
 	    <TITLE>{{ title }}</TITLE>
     </HEAD>
     <BODY>
-	    <H1>{{ n }} is {{ c }}</H1>
+	    <H1>
+		    {{ n }} is 
+		    {% if n is divisibleby 2 %}even
+		    {% else %}odd
+		    {% endif %}
+	    </H1>
     </BODY>
 </HTML>
