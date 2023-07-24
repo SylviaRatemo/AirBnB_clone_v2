@@ -12,12 +12,17 @@ class State(BaseModel, Base):
     __tablename__ = "states"
     name = Column(String(128), nullable=False)
     cities = relationship("City", backref="state", cascade="delete")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
     if getenv("HBNB_TYPE_STORAGE") != "db":
         @property
         def cities(self):
             """Get a list of all related City objects."""
+            list_cities = models.storage.all("City")
             listCity = []
-            for city in list(models.storage.all(City).values()):
-                if city.state_id == State.id:
-                    listCity.append(city)
+            for city in list_cities:
+                if list_cities[city].state_id == self.id:
+                    listCity.append(list_cities[city])
             return listCity
