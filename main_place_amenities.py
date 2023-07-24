@@ -3,10 +3,14 @@
 """
 from models import *
 from models.state import State
+from models.city import City
 
 # creation of a State
+print("B4")
 state = State(name="California")
+print("Made")
 state.save()
+print("After")
 
 # creation of a City
 city = City(state_id=state.id, name="San Francisco")
