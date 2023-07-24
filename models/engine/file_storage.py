@@ -62,8 +62,7 @@ class FileStorage:
         if obj is None:
             return
         try:
-            del FileStorage.__objects["{}.{}".format(type(obj).__name__,
-                                                     obj.id)]
+            FileStorage.__objects.pop(obj.id, 0)
         except (AttributeError, KeyError):
             pass
 
