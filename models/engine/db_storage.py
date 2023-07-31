@@ -31,7 +31,7 @@ class DBStorage:
 
     def all(self, cls=None):
         """Query on the curr session all objects of the given class"""
-        if cls is None:
+        """if cls is None:
             objs = self.__session.query(State).all()
             objs.extend(self.__session.query(City).all())
             objs.extend(self.__session.query(User).all())
@@ -43,7 +43,27 @@ class DBStorage:
                 cls = eval(cls)
             objs = self.__session.query(cls)
         return {"{}.{}".format(type(obj).__name__, obj.id):
-                obj for obj in objs}
+                obj for obj in objs}"""
+        objDict = {}
+        if cls is None:
+            classes = {'State': State, 'City': City, 'User': User, 'Place': Place, 'Review': Review, 'Amenity': Amenity}
+            for key, value in classes.items():
+                # print("Here")
+                objct = self.__session.query(value).all()
+                for obj in objct:
+                    key = "{}.{}".format(type(obj).__name__, obj.id)
+                    # print(key)
+                    objDict[key] = obj
+        else:
+            if type(cls) == str:
+                cls = eval(cls)
+            objct = self.__session.query(cls)
+            for obj in objct:
+                key = "{}.{}".format(type(obj).__name__, obj.id)
+                objDict[key] = obj
+
+        # print(objDict)
+        return objDict
 
     def new(self, obj):
         """Add obj to the current database session."""

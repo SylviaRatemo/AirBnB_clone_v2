@@ -4,26 +4,15 @@
 from models import *
 from models.state import State
 from models.city import City
+from models.user import User
+from models.place import Place
+from models.amenity import Amenity
 
-# creation of a State
-print("B4")
-state = State(name="California")
-print("Made")
-state.save()
-print("After")
-
-# creation of a City
-city = City(state_id=state.id, name="San Francisco")
-city.save()
-
-# creation of a User
-user = User(email="john@snow.com", password="johnpwd")
-user.save()
 
 # creation of 2 Places
-place_1 = Place(user_id=user.id, city_id=city.id, name="House 1")
+place_1 = Place(user_id="72bd56f2-23cc-4552-b6c4-ccb4aa4b34000", city_id="469331a2-9608-46bc-8fdc-609e2cfdedf0", name="House 1")
 place_1.save()
-place_2 = Place(user_id=user.id, city_id=city.id, name="House 2")
+place_2 = Place(user_id="72bd56f2-23cc-4552-b6c4-ccb4aa4b34000", city_id="469331a2-9608-46bc-8fdc-609e2cfdedf0", name="House 2")
 place_2.save()
 
 # creation of 3 various Amenity
@@ -46,3 +35,4 @@ place_2.amenities.append(amenity_3)
 storage.save()
 
 print("OK")
+
